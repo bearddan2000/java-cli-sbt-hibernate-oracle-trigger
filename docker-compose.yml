@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+  java-srv:
+    build:
+      context: java-srv
+    depends_on:
+      - db
+    links:
+      - "db:db"
+    command: sh -c "/wait && sbt clean compile package run"
+    environment:
+      - WAIT_HOSTS=db:1521
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=60
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+
+  db:
+    image: gvenzl/oracle-free:latest
+    environment:
+      - ORACLE_PASSWORD=pass
+      - APP_USER=maria
+      - APP_USER_PASSWORD=pass
+    ports:
+      - 1521
